@@ -1,0 +1,9 @@
+Mongodb Databases does not contain any schema. 
+
+1. show dbs : Display all the available databases.
+2. use shop : Switching to a particular database
+3. db.products.insertone({name:'A Book',price:300}) : Inserting a record to the collection products.
+4. db.products.find() : To explore the collections.
+5. db.products.find().pretty() : To explore the collections in a better looking manner.
+6. 
+ 
