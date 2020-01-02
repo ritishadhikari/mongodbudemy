@@ -5,5 +5,24 @@ Mongodb Databases does not contain any schema.
 3. db.products.insertone({name:'A Book',price:300}) : Inserting a record to the collection products.
 4. db.products.find() : To explore the collections.
 5. db.products.find().pretty() : To explore the collections in a better looking manner.
-6. 
  
+A collection is equivalent to a table in Mongodb. 
+
+Without creating a record in a database, the database actually don't get created even we are using that database.
+
+Mongodb stores the user input json data into bson data which is much more efficient to use.
+
+It is not necessary that the _id will be generated directly. User can also input the _id manually. The only condition is that the ids in each documents needs to be distinct.
+
+Create -> insertOne(data,options); insertMany(data,options)
+Read -> find(filter, options); findOne(filter, options)
+Update -> updateOne(filter, data, options); updateMany(filter, data, options); replaceOne(filter, data, options)
+Delete -> deleteOne(filter, options); deleteMany(filter, options)
+
+6. db.fightData.deleteOne({"departureAirport": "MUC"}) : Delete a Document from the collection. 
+7. db.fightData.updateOne({"departureAirport":"TXL"}, {$set:{"marker":"delete"}}) : Update a Document by entering a new information. Look at the $set command.
+8. db.fightData.updateMany({}, {$set:{"marker":"todelete"}}) : Update all the Documents in the collection  by entering a new information.
+9. db.fightData.deleteMany({"marker":"todelete"}) : Delete all the document which has marker as delete.
+10.db.fightData.insertMany([{"departureAirport":"MUC","arrivalAirport":"SFO","aircraft":"Airport A380","distance":12000,"intercontinental":true},
+{"departureAirport":"TXL","arrivalAirport":"LHR","_id":"ritz0607"}]) : Insert Multiple Document in a Collection.
+
