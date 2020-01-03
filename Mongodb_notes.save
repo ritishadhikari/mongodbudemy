@@ -25,17 +25,3 @@ Delete -> deleteOne(filter, options); deleteMany(filter, options)
 9. db.fightData.deleteMany({"marker":"todelete"}) : Delete all the document which has marker as delete.
 10.db.fightData.insertMany([{"departureAirport":"MUC","arrivalAirport":"SFO","aircraft":"Airport A380","distance":12000,"intercontinental":true},
 {"departureAirport":"TXL","arrivalAirport":"LHR","_id":"ritz0607"}]) : Insert Multiple Document in a Collection.
-11. db.fightData.find({departureAirport:"TXL"}).pretty() : Find a Document with departureAirport as TXL
-12. db.fightData.find({distance:{$gt:10000}}).pretty(): Find a Document with distance greater than 10000
-
-Incase we are using Update command inplace of Updateone or Updatemany, then all the objects are overwritten which is not the case for the later two. Hence we use set command with updateone 
-and updatemany.
-
-For replacing more than one object in a document we can also us the replaceone command.
-13. db.passengers.find().toArray() : This command shows all the documents unlike Pretty which shows only the first 20 documents.
-14. db.passengers.find({},{_id:0,name:1,age:0}): Project only the name from each document. Here _id:0 is mandatory while age:0 is optional.
-15. db.passengers.find({"age":35},{"name":1, _id:0}).pretty() : Equivalent to select name from passengers where age=35.
-
-Mongodb support embedded documents. Upto 100 levels of Nesting in each document and maximum of 16 mb per document.
-16. db.passengers.findOne({name:"Maria Jones"})["hobbies"] : Select hobbies from passengers where name = 'Maria Jones'
-
