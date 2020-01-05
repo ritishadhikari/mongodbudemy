@@ -39,3 +39,112 @@ For replacing more than one object in a document we can also us the replaceone c
 Mongodb support embedded documents. Upto 100 levels of Nesting in each document and maximum of 16 mb per document.
 16. db.passengers.findOne({name:"Maria Jones"})["hobbies"] : Select hobbies from passengers where name = 'Maria Jones'
 
+17. db.patientdata.find({"history.0.treatment":"acidity"}) : Command to find for a specific document when we are searching for an embedding document.
+18. db.patientdate.drop() : Drop a Collection.
+19. db.dropDatabase() : Command to drop a Database after using the Database.
+
+Data Types in Mongodb : 
+a. Text : 16 MB per Document
+b. Booleans : True/ False
+c. Integers : Int32, Int64
+d. NumberDecimals : High Precision Floating Point values.
+e. objectId : Unique ID containing a temporal component which are successive in order as per the document creation.
+f. ISODate : Date Type
+g. Timestamp : ex : 11421532
+h. Embedded Documents
+i. Arrrays : List of strings, Numbers etc.
+
+18. db.stats() : Provides the statistics of the Database.
+19. db.numbers.insertOne({a:NumberInt(1)}) : Initialising object a with Mongobd initialized number 1. Also can be included is NUmberLong and NumberDecimal.
+ 
+
+EMbeddings are necessary when there is a strong one-one document.
+
+We may carry on with embeddings or we may create separate collections and then merge the documents based on some objects.
+
+For One to Many or Many to Many, we may consider referencing as so to mitigate the edit and modifications for individual collections or documents.
+
+20. db.books.aggregate([{$lookup:{from :"authors", localField:"author.auth_id", foreignField: "_id",as:"creators"}}]).pretty() : Use lookup for joining books collection with author collection with alias
+name as creators.
+
+We can define rules to validate inserts and update before writing to the database. We need to chose validation level and action based on our application requirements. Lecture 52 and 53. 
+
+21.db.createCollection("post",
+{validator:{
+   $jsonSchema: {bsonType: "object",
+              required : ["title","text","creator", "comment"],
+              properties:{
+                title:{
+                  bsonType:'string',
+                  description:"String Field is Required"},
+                  text:{
+                    bsonType:'string',
+                    description:"String Field is Required"
+                  },
+                  creator:{
+                    bsonType:'objectId',
+                    description:"ObjectId is Required"
+                  },
+                  comment:{
+                    bsonType:'array',
+                    description:"Array field is Required",
+                    items :{
+                      bsonType:'object',
+                      required : ['text','author'],
+                      properties: {
+                        text:{
+                          bsonType:'string',
+                          description:"string is required"
+                        },
+                        author:{
+                          bsonType:'objectId',
+                          description:"objectId is required"
+                        }
+
+                      }
+                    }
+
+              }}}}}); - Schema Validation Code. Error will be thrown if this is technique is not adhered to.
+
+22. db.runCommand({
+  collMod: 'posts',
+  validator: {
+    $jsonSchema: {
+      bsonType: 'object',
+      required: ['title', 'text', 'creator', 'comments'],
+      properties: {
+        title: {
+          bsonType: 'string',
+          description: 'must be a string and is required'
+        },
+        text: {
+          bsonType: 'string',
+          description: 'must be a string and is required'
+        },
+        creator: {
+          bsonType: 'objectId',
+          description: 'must be an objectid and is required'
+        },
+        comments: {
+          bsonType: 'array',
+          description: 'must be an array and is required',
+          items: {
+            bsonType: 'object',
+            required: ['text', 'author'],
+            properties: {
+              text: {
+                bsonType: 'string',
+                description: 'must be a string and is required'
+              },
+              author: {
+                bsonType: 'objectId',
+                description: 'must be an objectid and is required'
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  validationAction: 'warn'
+}); : To set up a validator with a warning message. 
