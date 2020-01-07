@@ -1,0 +1,13 @@
+2020-01-06T10:49:36.212+0530 I CONTROL  [initandlisten] MongoDB starting : pid=2863 port=27017 dbpath=/data/db 64-bit host=ritishvb
+2020-01-06T10:49:36.212+0530 I CONTROL  [initandlisten] db version v3.6.3
+2020-01-06T10:49:36.212+0530 I CONTROL  [initandlisten] git version: 9586e557d54ef70f9ca4b43c26892cd55257e1a5
+2020-01-06T10:49:36.212+0530 I CONTROL  [initandlisten] OpenSSL version: OpenSSL 1.1.1  11 Sep 2018
+2020-01-06T10:49:36.212+0530 I CONTROL  [initandlisten] allocator: tcmalloc
+2020-01-06T10:49:36.212+0530 I CONTROL  [initandlisten] modules: none
+2020-01-06T10:49:36.212+0530 I CONTROL  [initandlisten] build environment:
+2020-01-06T10:49:36.212+0530 I CONTROL  [initandlisten]     distarch: x86_64
+2020-01-06T10:49:36.212+0530 I CONTROL  [initandlisten]     target_arch: x86_64
+2020-01-06T10:49:36.212+0530 I CONTROL  [initandlisten] options: { processManagement: { fork: true }, systemLog: { destination: "file", path: "/home/ritish/mongodb/mongodbudemy/logs/log.log" } }
+2020-01-06T10:49:36.213+0530 I STORAGE  [initandlisten] exception in initAndListen: NonExistentPath: Data directory /data/db not found., terminating
+2020-01-06T10:49:36.213+0530 I CONTROL  [initandlisten] now exiting
+2020-01-06T10:49:36.213+0530 I CONTROL  [initandlisten] shutting down with code:100

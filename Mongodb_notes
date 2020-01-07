@@ -148,3 +148,19 @@ We can define rules to validate inserts and update before writing to the databas
   },
   validationAction: 'warn'
 }); : To set up a validator with a warning message. 
+
+23. sudo mongod --dbpath ~/mongodb/mongodbudemy/db : To set up a new Database storage location
+24. sudo mongod --dbpath ~/mongodb/mongodbudemy/db sudo --logpath ~/mongodb/mongodbudemy/logs   : To set up a new Database storage location and also Create a Log path
+25. sudo mongo -fork --logpath ~/mongodb/mongodbudemy/logs : To continue with the linux terminal even after starting a child mongodb instance.
+26. sudo mongod -f configuration_file_path: To set up the configuration file parameters like logs and storage by just passing the configuration file list.
+27. db.collection_name.help: Provides the help menu on the collection selected.
+28. db.hobbies.insertMany([{_id:'yoga', name:'Yoga'},{_id:"cooking", name: "Cooking"}, {_id:"hiking", name:"Hiking"}], {ordered:false}) : Even if an ID exist before a non existant ID, Mongo db will 
+add the non existant id into its database while throwing the duplicate id error for the duplicate ids. 
+29. db.persons.insertOne({name:'rohit', age:26},{writeConcern:{w:1}}) : with w:0 as writeConcern, the data is not stored into the memory although it is stored in the database. Hence we get an 
+acknowldgement as False. with w:1 as thr writeConcern, the data is both stored in the database as well as saved in the memory.
+30. db.persons.insertOne({name:'antik', age:15},{writeConcern:{w:1,j:true}}) : Adding the data also in the journal so that the data is stored in the database without fail. It provides more security.
+31. db.persons.insertOne({name:'antik', age:15},{writeConcern:{w:1,j:true,wtimeout:200}})  : Adding the data with a time out option. Incase the data is not added in that max milisecond, then the fail 
+will happen and so that user don't have to wait unnecessarily and can upload the data once again. 
+32. mongoimport tv-shows.json -d movie_data -c movies --jsonArray --drop : Importing the tv-shows.json file into the movies collection of movie_data database. It is indicating that it 
+contains json arrays and drop any collection with the name movies before freshly creating and then adding the json file into the mentioned database. This command is written in the shell. 
+
