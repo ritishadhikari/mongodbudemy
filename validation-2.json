@@ -1,0 +1,1 @@
+db.companies.insertMany([{name:'accenture', employees: 25000}{{name:'tcs', employees: 20000}}])
