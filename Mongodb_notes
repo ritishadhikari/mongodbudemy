@@ -232,3 +232,24 @@ Unique Indexes ensure data consistency and ensure avoid duplicate data for field
 searched for. It saves significant space while writing queries. 
 82. db.users.createIndex({email:1}, {unique:true, partialFilterExpression:{email:{$exists:true}}}): This function will only create an index for documents which will have an email field. For the
 rest of the documents, the insert into this collection will happen even if no email exists but they won't be indexed.
+83. db.sessions.createIndex({createdAt:1},{expireAfterSeconds:10}) : expireAfterSeconds is used so that the data is deleted after a prescribed time. It works only with date indexes and works
+only on single indexes and not multiindexes.
+
+Diagnosis of queries can be done through : QueryPlanner, executionStats and allPlansExecution. 
+
+Multikey Indexes are used for objects holdings arrays. Note that we cannot hold a compound index with an object holding arrays and another with an object holding singular values. 
+
+84. db.products.createIndex({description:"text"}) : Creating text Indexes by removing all stopwords and storing the text array as keys.
+85. db.products.find({$text:{$search:"awesome"}}).pretty() : Post the creation of a text index, when this query is run, it provides all the texts with description object values as awesome.
+86. db.products.find({$text:{$search:"\"pretty awesome\""}}).pretty() : Query to search for text with more than one word. Here it searches for the word : pretty awesome.
+87. db.products.find({$text:{$search:"awesome T-Shirt"}},{score:{$meta:"textScore"}}).sort({score:{$meta:"textScore"}}).pretty() : This query finds the score of the searched strings from the text
+objects and then sorts the scores and displays the list as per the score.
+88. db.products.dropIndex("description_text"): Query to drop a text index. This description_text is the name of the index which can be found by querying db.products.getIndex()
+89. db.products.createIndex({title:"text", description:"text"}) : We can assign two text objects as an index separately. For this to take place, we need to drop the previous text indexes
+and then only assign this multiple object index.
+90. db.products.find({$text:{$search:"awesome -book"}}).pretty() : This query will find all the documents which have awesome without the word book attached to the words in the object of the document.
+91. db.products.createIndex({title:"text", description:"text"},{default_language:"english", weights:{title:1, description:10}}) : Creates the index and gives weights to different indexes separately. 
+With weights searching with a metascore later will give us a different score compared to not assigning weights to the text indexes.
+92. db.products.createIndex({title:"text", description:"text"},{default_language:"english", background:true}) : When the background is set to true, then the collection is not occupied. But the
+index creation is mush slower. 
+
