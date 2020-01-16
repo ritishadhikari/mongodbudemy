@@ -253,3 +253,25 @@ With weights searching with a metascore later will give us a different score com
 92. db.products.createIndex({title:"text", description:"text"},{default_language:"english", background:true}) : When the background is set to true, then the collection is not occupied. But the
 index creation is mush slower. 
 
+Working with GeoJson data with Mongodb requires one to work with GeoJSON objects like Point, Linestring, Polygon, Geometry Collection and etc. 
+
+93. db.places.insertOne({name:"VictoriaMemorial", location:{type:"Point", coordinates:[22.5448131, 88.3403638]}}): Adding a GeoJson Data. The type and co-ordinates are mandatory where the first
+index in coordinate is the longitude while the second is the latitude. 
+94. db.places.createIndex({location:"2dsphere"}) : Creating a geoSpatial Index for accessing nearby places.
+95. db.places.find({location:{$near:{$geometry:{type:"Point", coordinates:[88.3403638,22.5448131]},$maxDistance:20000, $minDistance:10000}}}).pretty() : It gives the nearby location from the 
+distance provided in a sorted manner with the nearest location first.
+96. db.places.find({location:{$geoWithin:{$geometry:{type:"Polygon", coordinates:[[p1,p2,p3,p4,p1]]}}}}).pretty() : Denotes the places which is present in the places collection which is marked within
+the location [p1,p2,p3,p4,p1]. Assign all the points p1 to p4 beforehand.
+97. db.areas.insertOne({name:"Maidan Circle", area:{type:"Polygon", coordinates:[[p1,p2,p3,p4,p1]]}}) : Adding an Area into the database.
+98. db.areas.find({area: $geoIntersects:{$geometry:{type:"Point", coordinates:[88.3403638,22.5448131]}}}).pretty() : To check whether the user point intersects with the mentioned area: Maidan
+Circle in the database.
+99. db.places.find({$location:{$geowithin:{$centreSphere:[[88.3403638,22.5448131],1/6378.1]}}}).pretty : It gives the nearby location from the distance provided in an unsorted manner. Here 1/6378.1
+denotes 1 Kilometer converted into radians.
+
+100. db.persons.aggregate([{$match:{gender:"female"}}]) : Aggregate function to find the gender as female using the $match keyword.
+101. db.persons.aggregate([{$match:{gender:"female"}}, {$group:{_id:{state:"$location.state"},totalPersons:{$sum:1}}}]).pretty() : First matching gender as female and then taking group by of states
+then finding the total number of persons for that groupby count.
+102. db.persons.aggregate([{$match:{gender:"female"}}, {$group:{_id:{state:"$location.state"},totalPersons:{$sum:1}}}, {$sort:{totalPersons:-1}}]).pretty() : After the groupby stage, sorting the array
+with the totalPersons derived from the groupBy section.
+103. db.persons.aggregate([{$match:{"dob.age":{$gt:50}}},{$group:{_id:{gender:"$gender"},totalPersons:{$sum:1}, avg_persons:{$avg:"$dob.age"} }}, {$sort:{totalPersons:-1}}]) : Find Persons older than 
+50. Group them by gender. Find how many persons per gender. Average age per gender. Order the Output by total Persons per gender. 
