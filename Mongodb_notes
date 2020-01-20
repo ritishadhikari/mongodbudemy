@@ -275,3 +275,118 @@ then finding the total number of persons for that groupby count.
 with the totalPersons derived from the groupBy section.
 103. db.persons.aggregate([{$match:{"dob.age":{$gt:50}}},{$group:{_id:{gender:"$gender"},totalPersons:{$sum:1}, avg_persons:{$avg:"$dob.age"} }}, {$sort:{totalPersons:-1}}]) : Find Persons older than 
 50. Group them by gender. Find how many persons per gender. Average age per gender. Order the Output by total Persons per gender. 
+104. db.persons.aggregate([{$project:{_id:0, gender:1, FullName:{$concat:["$name.first"," ","$name.last"]}}}]) : This query outputs the gender, and concates the name.first and name.last as FullName
+as the alias.
+105. db.persons.aggregate([{$project:{_id:0, gender:1, FullName:{$concat:[{$toUpper:"$name.first"}," ",{$toLower:"$name.last"}]}}}]) : Similar to the previous. Concats with the first name to 
+upper case and the last name to the lower case. 
+
+106. db.persons.aggregate([{$project:{_id:0, gender:1, FullName:{$concat:[{$toUpper:{$substrCP:["$name.first",0,1]}},{$substrCP:["$name.first",1,{$subtract:[{$strLenCP:"$name.first"},1]}]},
+" ",{$toUpper:{$substrCP:["$name.last",0,1]}},{$substrCP:["$name.last",1,{$subtract:[{$strLenCP:"$name.last"},1]}]}]}}}]) : We are appending five things here: first the first Letter of the first Name,
+second: the 2nd letter to the last letter of the first name, third: the space, fourth: the first letter of the last name, fifth: the 2nd letter to the last letter of the last name.
+
+107.db.persons.aggregate([{$project:{_id:0,name:1, email:1, location:{type:"Point", coordinates:[{$convert:{input:"$location.coordinates.longitude",to:"double", onError:0.0, onNull:0.0}},
+"$location.coordinates.latitude"]}}},{$project:{location:1,gender:1, FullName:{$concat:[{$toUpper:{$substrCP:["$name.first",0,1]}},
+{$substrCP:["$name.first",1,{$subtract:[{$strLenCP:"$name.first"},1]}]}," ",{$toUpper:{$substrCP:["$name.first",0,1]}},{$substrCP:["$name.first",1,{$subtract:[{$strLenCP:"$name.first"},1]}]}]}}}]) :
+Taking the projection of the coordinates along with the next projection.
+
+108. db.friends.aggregate([{$group: {_id:{age:"$age"}, allHobbies: {$push:"$hobbies"}}}]).pretty() : This query brings all the hobbies arrays under each specific ages, i.e., each age group will have 
+all the hobbies that are present in that age group. Here all the hobbies are contained in an individual list.
+
+109. db.friends.aggregate([{$unwind:"$hobbies"},{$group: {_id:{age:"$age"}, allHobbies: {$push:"$hobbies"}}}]).pretty() : This query is similar to the earlier query, just that it provides the list of 
+the hobbies age wise in a single list.
+
+110. db.friends.aggregate([{$unwind:"$hobbies"},{$group: {_id:{age:"$age"}, allHobbies: {$addToSet:"$hobbies"}}}]).pretty() : This query is similar to the earlies. Just that it does not add 
+duplicate values in the hobbies list.
+
+111. db.friends.aggregate([{$project:{_id:0, examscore:{$slice:["$examScores",1]}}}]) : To slice the first examscore from each document. Replace 1 with -1 to find the last exam score or 2 to find
+two exam scores for each document.
+
+112. db.friends.aggregate({$project:{_id:0,scoresize:{$size:"$examScores"}}}) : To find the arraysize for each examScores present in each document. 
+
+113. db.friends.aggregate([{$project:{_id:0, scores:{$filter:{input:"$examScores", as:"sc", cond:{$gt:["$$sc.score",60]}}}}}]) : To find the examscores which are greater than 60 using the filter
+command.
+
+114. db.friends.aggregate([
+  {$unwind:"$examScores"},
+  {$project: {_id:1, name:1, age:1, scores:"$examScores.score"}},
+  {$sort:{scores:1}},
+  {$group:{ _id:"$_id", name:{$first:"$name"} ,maxscores:{$max:"$scores"}}},
+  {$sort:{maxscore:-1}}
+]) : Finding the Maximum Score for each id and then sorting it by the maximum scores.
+
+115. db.persons.aggregate([{$bucket:{
+                                groupBy:"$dob.age",
+                                boundaries:[0,18,30,50,80,120],
+                                output:{
+                                  numPersons:{$sum:1},
+                                  averageAge:{$avg:"$dob.age"},
+                                  names:{$push:"$name.first"}
+                                        }       
+                                }
+                      }
+                     ]
+                    ) :Buckets the age group as per the given list choice after doing group by and then fetching the requisite outputs like averageAge, the names contained and also the totalnumber
+of persons.
+
+116. db.persons.aggregate([{$bucketAuto:{
+                                groupBy:"$dob.age",
+                                buckets:5,
+                                output:{
+                                  numPersons:{$sum:1},
+                                  averageAge:{$avg:"$dob.age"},
+                                  names:{$push:"$name.first"}
+                                }
+}}]) : Autobucketing wherein Mongodb auto assigns the lists. 
+
+117. db.persons.aggregate([{$match:{$gender:"male"}}
+                      {$project:{_id:0, name:{$concat:["$name.first"," ", "$name.last"]}, birthdate:{ $toDate:"$dob.date"}}},
+                      {$sort:{birthdate:1}},
+                      {$skip:10},
+                      {$limit:10}
+  ]).pretty() : From the persons collection, first filtering gender as male, then considering only the name and the dateofbirth and then sorting the dateofbirth before skipping the first 10
+and then limiting the records by 10. 
+
+118. db.persons.aggregate([{$bucketAuto:{
+                                groupBy:"$dob.age",
+                                buckets:5,
+                                output:{
+                                  numPersons:{$sum:1},
+                                  averageAge:{$avg:"$dob.age"}
+                                }
+}},
+                      {$out:"outcol"}
+]) : Posting the entire output of the query into a new collection called "outcol".
+
+119. db.transformedPersons.aggregate([{$geoNear:
+                              {
+                                near:{type:"Point", coordinates:[-18.5, -4]}
+                              },
+                              {
+                                maxDistance:10000,
+                                num:10,
+                                query: {gender:"female"},
+                                distanceField:"distance"
+                              }
+            }]) : Geo Query in aggregate to find documents wherein the coordinates are within the prescribed limits of 10 kms and where gender is female.
+
+120. db.persons.insertOne(age:NumberInt(30)) : To store the age as Integer32 which shrinks the size of the number. Do sb.persons.stats() to find out more. 
+
+121. db.persons.insertOne({age:NumberLong("32939282732838392")}) : Save it as a long number within quotation.
+
+122. db.science.insertOne({a:NumberDecimal("0.3"), b:NumberDecimal("0.1")}) : Save it as a high precision decimal number.
+
+The Security checlist in Mongodb are: 
+a. Authenticity and Autorization.
+b. Transport Encryption.
+c. Encryption at Rest.
+d. Auditing. 
+e. Server and Network Congfig and Setup. 
+f. Backups and Software Updates. 
+
+123. db.createUser({user:"ritish", pwd:"ritish", roles:["userAdminAnyDatabase"]}) : Authentication of the user by creating the user.
+
+124. db.auth('ritish','ritish') : AUthorization of the created user. This command needs to follow the previous command.
+
+125. db.createUser({user:"appdev", pwd:"dev" ,roles:["readWrite"]}) : Provide readWrite authentication to a particular user.
+
+126. db.getUser("appdev") : To check the user's authentication and authorization over the databases.
