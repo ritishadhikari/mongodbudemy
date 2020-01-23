@@ -390,3 +390,26 @@ f. Backups and Software Updates.
 125. db.createUser({user:"appdev", pwd:"dev" ,roles:["readWrite"]}) : Provide readWrite authentication to a particular user.
 
 126. db.getUser("appdev") : To check the user's authentication and authorization over the databases.
+
+127: db.createCollection("capped",{capped:true, size:10000, max:3}) : Creating a Capped collection which can take atmost 3 documents per collection and when a new document 
+entry comes up, the oldest document that was entered vanishes away.
+
+128. db.capped.find().sort({$natural:-1}).pretty() : Sorting the capped collection in a reverse mannner. By default, the documents in  capped collection will be displayed as per the chronology 
+of the inserts. 
+
+#With the help of replica sets, we can read data from a secondary nodes incase the primary node is offline. But we can write data always from the primary Node only. 
+
+In Sharding, Data is distributed across Shards and queries are run across all shards. Multiple replica sets are created and the client can access all the requats through mongos(Router). 
+Each Replica sets are indexed through Shard Keys.
+
+We can use MongoAtlas to connect the Mongo Server to the cloud and do our operations. Quite helpful for deployment purpose.
+
+ 
+129. const usersC = session.getDatabase("rop").user
+     const usersP = session.getDatabase("rop").posts : Creating two Sessions for user and posts collection respectively after creating user and posts collection separately.
+
+130. usersC.deleteMany({_id:ObjectId("5e27b6fe433ecd8890e9e84b")})
+     usersP.deleteMany({author:ObjectId("5e27b6fe433ecd8890e9e84b")}) : Deleting the two sessions. Note once commit transactions has been made on the session, then either the two collections
+get deleted simultanously or they don't get deleted at all. 
+
+131. session.commitTransaction() : Committing the transactions. POst this commit, the actual collections will also be deleted. 
